@@ -1,8 +1,18 @@
 //! Ballista physical query plan
 
-use arrow::datatypes::Schema;
+use std::sync::Arc;
 
-pub trait PhysicalPlan {}
+use crate::error::Result;
+use arrow::datatypes::Schema;
+use arrow::record_batch::RecordBatch;
+
+pub trait BallistaResult {
+    fn next(&self) -> Result<Arc<RecordBatch>>;
+}
+
+pub trait PhysicalPlan {
+    fn execute(&self, partition: usize) -> Result<Box<dyn BallistaResult>>;
+}
 
 /// Projection filters the input by column
 #[allow(dead_code)]
@@ -11,7 +21,11 @@ pub struct Projection {
     input: Box<dyn PhysicalPlan>,
 }
 
-impl PhysicalPlan for Projection {}
+impl PhysicalPlan for Projection {
+    fn execute(&self, partition: usize) -> Result<Box<dyn BallistaResult>> {
+        unimplemented!()
+    }
+}
 
 /// Selection filters the input by row
 #[allow(dead_code)]
@@ -52,7 +66,11 @@ impl HashAggregate {
     }
 }
 
-impl PhysicalPlan for HashAggregate {}
+impl PhysicalPlan for HashAggregate {
+    fn execute(&self, partition: usize) -> Result<Box<dyn BallistaResult>> {
+        unimplemented!()
+    }
+}
 
 /// Merge to a single partition
 #[allow(dead_code)]
@@ -66,7 +84,11 @@ impl Merge {
     }
 }
 
-impl PhysicalPlan for Merge {}
+impl PhysicalPlan for Merge {
+    fn execute(&self, partition: usize) -> Result<Box<dyn BallistaResult>> {
+        unimplemented!()
+    }
+}
 
 /// Represents a partitioned file scan
 #[allow(dead_code)]
@@ -86,7 +108,11 @@ impl FileScan {
     }
 }
 
-impl PhysicalPlan for FileScan {}
+impl PhysicalPlan for FileScan {
+    fn execute(&self, partition: usize) -> Result<Box<dyn BallistaResult>> {
+        unimplemented!()
+    }
+}
 
 pub trait PhysicalExpr {}
 
