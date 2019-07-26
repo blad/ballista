@@ -5,6 +5,7 @@ use std::sync::Arc;
 use crate::error::Result;
 use arrow::datatypes::Schema;
 use arrow::record_batch::RecordBatch;
+use datafusion::execution::context::ExecutionContext;
 
 pub trait BallistaResult {
     fn next(&self) -> Result<Arc<RecordBatch>>;
@@ -110,6 +111,12 @@ impl FileScan {
 
 impl PhysicalPlan for FileScan {
     fn execute(&self, partition: usize) -> Result<Box<dyn BallistaResult>> {
+        let mut ctx = ExecutionContext::new();
+        ctx.register_csv("temp", &self.path[partition], &self.schema, true);
+        let table = ctx.table("temp")?;
+        let plan = table.to_logical_plan();
+        let result = ctx.execute(&plan, 1024)?;
+        let result = result.borrow_mut();
         unimplemented!()
     }
 }
