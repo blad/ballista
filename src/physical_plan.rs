@@ -1,11 +1,14 @@
 //! Ballista physical query plan
 
+use std::cell::RefCell;
+use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::error::Result;
 use arrow::datatypes::Schema;
 use arrow::record_batch::RecordBatch;
 use datafusion::execution::context::ExecutionContext;
+use datafusion::execution::relation::Relation;
 
 pub trait BallistaResult {
     fn next(&self) -> Result<Arc<RecordBatch>>;
@@ -116,7 +119,22 @@ impl PhysicalPlan for FileScan {
         let table = ctx.table("temp")?;
         let plan = table.to_logical_plan();
         let result = ctx.execute(&plan, 1024)?;
-        let result = result.borrow_mut();
+        Ok(Box::new(ArrowResult::new(result)))
+    }
+}
+
+struct ArrowResult {
+    rel: Rc<RefCell<dyn Relation>>
+}
+
+impl ArrowResult {
+    pub fn new(rel: Rc<RefCell<dyn Relation>>) -> Self {
+        Self { rel }
+    }
+}
+
+impl BallistaResult for ArrowResult {
+    fn next(&self) -> Result<Arc<RecordBatch>> {
         unimplemented!()
     }
 }
