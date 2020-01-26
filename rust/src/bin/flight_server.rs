@@ -62,6 +62,9 @@ impl FlightService for FlightServiceImpl {
         &self,
         _request: Request<Ticket>,
     ) -> Result<Response<Self::DoGetStream>, Status> {
+
+        println!("do_get");
+
         Err(Status::unimplemented("Not yet implemented"))
     }
 
@@ -89,10 +92,12 @@ impl FlightService for FlightServiceImpl {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "[::1]:50051".parse()?;
+    let addr = "0.0.0.0:50051".parse()?;
     let service = FlightServiceImpl {};
 
     let svc = FlightServiceServer::new(service);
+
+    println!("Listening on {:?}", addr);
 
     Server::builder().add_service(svc).serve(addr).await?;
 

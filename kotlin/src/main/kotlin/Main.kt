@@ -11,7 +11,7 @@ class Test {
 
             val client = FlightClient.builder()
                     .allocator(RootAllocator(Long.MAX_VALUE))
-                    .location(Location.forGrpcInsecure("localhost", 1234))
+                    .location(Location.forGrpcInsecure("localhost", 50051))
                     .build();
 
             val callOptions = CallOptions.timeout(5, TimeUnit.SECONDS)
