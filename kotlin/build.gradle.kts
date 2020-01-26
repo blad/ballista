@@ -24,6 +24,7 @@ buildscript {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
 }
@@ -31,9 +32,8 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
-    implementation("com.charleskorn.kaml:kaml:0.15.0")
-    implementation("info.picocli:picocli:4.1.0")
+    implementation("org.apache.arrow:flight-core:1.0.0-SNAPSHOT")
+    implementation("org.apache.arrow:flight-grpc:1.0.0-SNAPSHOT")
 
     // Maven plugin
     implementation("org.apache.maven:maven-plugin-api:3.6.3")
