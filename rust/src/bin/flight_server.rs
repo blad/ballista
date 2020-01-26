@@ -4,6 +4,8 @@ use futures::Stream;
 use tonic::transport::Server;
 use tonic::{Request, Response, Status, Streaming};
 
+use datafusion::execution::context::ExecutionContext;
+
 use flight::{
     flight_service_server::FlightService, flight_service_server::FlightServiceServer,
     Action, ActionType, Criteria, Empty, FlightData, FlightDescriptor, FlightInfo,
@@ -60,12 +62,36 @@ impl FlightService for FlightServiceImpl {
 
     async fn do_get(
         &self,
-        _request: Request<Ticket>,
+        request: Request<Ticket>,
     ) -> Result<Response<Self::DoGetStream>, Status> {
+        let ticket = request.into_inner();
+        match String::from_utf8(ticket.ticket.to_vec()) {
+            Ok(sql) => {
+                println!("do_get: {}", sql);
 
-        println!("do_get");
+                // create local execution context
+                let mut ctx = ExecutionContext::new();
 
-        Err(Status::unimplemented("Not yet implemented"))
+                // register parquet file with the execution context
+//                ctx.register_parquet(
+//                    "alltypes_plain",
+//                    &format!("{}/alltypes_plain.parquet", testdata),
+//                ).unwrap();
+
+                // create the query plan
+                let plan = ctx.create_logical_plan(&sql).unwrap();
+                let plan = ctx.optimize(&plan).unwrap();
+                let plan = ctx.create_physical_plan(&plan, 1024 * 1024).unwrap();
+
+                // execute the query
+                let results = ctx.collect(plan.as_ref()).unwrap();
+
+                //TODO how to write results back?
+
+                Err(Status::unimplemented("Not yet implemented"))
+            }
+            Err(e) => Err(Status::unimplemented(format!("Invalid ticket: {:?}", e)))
+        }
     }
 
     async fn do_put(
