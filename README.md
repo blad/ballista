@@ -6,7 +6,7 @@
 
 # Overview
 
-![ballista-logo](docs/images/ballista-logo2.png)
+![ballista-logo](docs/images/ballista-logo-64.png)
 
 Ballista is an experimental distributed compute platform based on [Kubernetes](https://kubernetes.io/) and [Apache Arrow](https://arrow.apache.org/) that I am developing in my spare time as a way to learn more about distributed data processing. It is largely inspired by Apache Spark.
 
