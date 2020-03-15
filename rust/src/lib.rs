@@ -8,4 +8,5 @@ pub mod protobuf {
 
 pub mod error;
 pub mod logical_plan;
+pub mod physical_plan;
 pub mod serde;
