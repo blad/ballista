@@ -1,4 +1,4 @@
-FROM ballistacompute/rust-cached-deps:0.2.0 as build
+FROM ballistacompute/rust-cached-deps as build
 
 WORKDIR /tmp/ballista
 
@@ -19,6 +19,6 @@ USER 1000
 EXPOSE 9090
 
 ENV RUST_LOG=info
-ENV RUST_BACKTRACE=1
+ENV RUST_BACKTRACE=full
 
 CMD ["/parallel-aggregate"]

@@ -80,6 +80,8 @@ async fn main() -> Result<(), BallistaError> {
                 }],
             };
 
+            println!("Sending plan to {}:{}", host, port);
+
             client::execute_action(&host, port, action)
                 .await
                 .map_err(|e| BallistaError::General(format!("{:?}", e)))
@@ -116,6 +118,7 @@ async fn main() -> Result<(), BallistaError> {
                                                                  //    .map_err(|e| to_tonic_err(&e))?;
 
     // print results
+    println!("{} batches", results.len());
 
     //TODO call utility method to print results
 
@@ -126,21 +129,24 @@ async fn main() -> Result<(), BallistaError> {
             batch.num_columns()
         );
 
-        let c1 = batch
-            .column(0)
-            .as_any()
-            .downcast_ref::<Int32Array>()
-            .expect("Int type");
+        println!("{:?}", batch.schema());
 
-        let c2 = batch
-            .column(1)
-            .as_any()
-            .downcast_ref::<Int32Array>()
-            .expect("Int type");
-
-        for i in 0..batch.num_rows() {
-            println!("{}, {}", c1.value(i), c2.value(i),);
-        }
+    //
+    //     let c1 = batch
+    //         .column(0)
+    //         .as_any()
+    //         .downcast_ref::<Int32Array>()
+    //         .expect("Int type");
+    //
+    //     let c2 = batch
+    //         .column(1)
+    //         .as_any()
+    //         .downcast_ref::<Int32Array>()
+    //         .expect("Int type");
+    //
+    //     for i in 0..batch.num_rows() {
+    //         println!("{}, {}", c1.value(i), c2.value(i),);
+    //     }
     });
 
     Ok(())
