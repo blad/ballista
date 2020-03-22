@@ -1,3 +1,4 @@
+use std::process;
 use std::sync::Arc;
 use std::thread;
 
@@ -17,14 +18,22 @@ use datafusion::execution::context::ExecutionContext;
 use datafusion::logicalplan::*;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), BallistaError> {
 
     println!("Parallel Aggregate Query Example");
 
-    let nyc_taxi_path = "/mnt/nyctaxi"; //TODO use env var
+    //TODO use env vars and/or command-line args
+    let nyc_taxi_path = "/mnt/nyctaxi";
+    let cluster_name = "ballista";
+    let namespace = "default";
 
     // get a list of ballista executors from kubernetes
-    let executors = cluster::get_executors("nyctaxi", "default").unwrap();
+    let executors = cluster::get_executors(cluster_name, namespace)?;
+    if executors.is_empty() {
+        println!("No executors found");
+        process::exit(1);
+    }
+
     let mut executor_index = 0;
 
     println!("Found {} executors", executors.len());
