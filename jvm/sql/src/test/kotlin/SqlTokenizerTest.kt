@@ -72,7 +72,6 @@ class SqlTokenizerTest {
         assertEquals(expected, actual)
     }
 
-
     @Test
     fun `tokenize SELECT with aggregates`() {
         val expected = listOf(
@@ -115,7 +114,6 @@ class SqlTokenizerTest {
         val actual = tokenize("a >= b OR a <= b OR a <> b OR a != b")
         assertEquals(expected, actual)
     }
-
 
     @Test
     fun `tokenize long values`() {
